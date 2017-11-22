@@ -41,12 +41,10 @@
     <Scripts>
         <OnLoad function="ClassTrialTimer_OnLoad" />
         <OnEvent function="ClassTrialTimer_OnEvent" />
-        <OnDragStart>
-            self:StartMoving()
-        </OnDragStart>
-        <OnDragStop>
-            self:StopMovingOrSizing()
-        </OnDragStop>
+        <OnShow function="ClassTrialTimer_OnShow" />
+        <OnHide function="ClassTrialTimer_OnHide" />
+        <OnDragStart function="ClassTrialTimer_OnDragStart" />
+        <OnDragStop function="ClassTrialTimer_OnDragStop" />
     </Scripts>
 </Frame>
 

@@ -1,3 +1,24 @@
+--[[----------------------------------------------------------------------------
+
+  ClassTrialTimer - World of Warcraft AddOn
+
+  Copyright 2017 Mike Battersby
+
+  ClassTrialTimer is free software: you can redistribute it and/or modify it
+  under the terms of the GNU General Public License, version 2, as published
+  by the Free Software Foundation.
+
+  ClassTrialTimer is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+  more details.
+
+  The file LICENSE.txt included with LiteMount contains a copy of the
+  license. If the LICENSE.txt file is missing, you can find a copy at
+  http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+----------------------------------------------------------------------------]]--
+
 local function Update(self)
     if not self.expireTime then return end
 
@@ -15,6 +36,18 @@ local function Update(self)
     end
 end
 
+local function SlashCommand(argstr)
+    local args = { strsplit(" ", argstr) }
+    local cmd = table.remove(args, 1)
+
+    if cmd == "hide" then
+        ClassTrialTimer:Hide()
+    elseif cmd == "show" then
+        ClassTrialTimer:Show()
+    else
+        RequestTimePlayed()
+    end
+end
 
 function ClassTrialTimer_OnUpdate(self, elapsed)
     self.totalElapsed = (self.totalElapsed or 0) + elapsed
@@ -31,11 +64,33 @@ function ClassTrialTimer_OnLoad(self)
 
     self:RegisterForDrag("LeftButton")
 
+    SlashCmdList["ClassTrialTimer"] = SlashCommand
+    SLASH_ClassTrialTimer1 = "/classtrialtimer"
+    SLASH_ClassTrialTimer2 = "/ctt"
+
     -- How to detect trial account?
     if UnitLevel("player") == 100 then
         self:RegisterEvent("TIME_PLAYED_MSG")
         RequestTimePlayed()
     end
+end
+
+function ClassTrialTimer_OnShow(self)
+    self:SetScript("OnUpdate", ClassTrialTimer_OnUpdate)
+end
+
+function ClassTrialTimer_OnHide(self)
+    self:SetScript("OnUpdate", nil)
+end
+
+function ClassTrialTimer_OnDragStart(self)
+    self:StartMoving()
+end
+
+function ClassTrialTimer_OnDragStop(self)
+    self:StopMovingOrSizing()
+    -- self:SetUserPlaced(false)
+    -- ClassTrialTimer_SavePosition(self)
 end
 
 function ClassTrialTimer_OnEvent(self, event, ...)
@@ -45,10 +100,8 @@ function ClassTrialTimer_OnEvent(self, event, ...)
             self.expireTime = time() + (8 * 60 * 60) - totalTime
             Update(self)
             self:Show()
-            self:SetScript("OnUpdate", ClassTrialTimer_OnUpdate)
         else
             self:Hide()
-            self:SetScript("OnUpdate", nil)
         end
     end
 end
