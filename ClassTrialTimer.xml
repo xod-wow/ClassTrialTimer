@@ -16,10 +16,6 @@
         <BackgroundInsets left="5" right="5" top="5" bottom="5" />
     </Backdrop>
 
-    <Anchors>
-        <Anchor point="TOP" y="-64" />
-    </Anchors>
-
     <Layers>
         <Layer level="OVERLAY">
             <FontString parentKey="characterName" inherits="GameFontNormal">

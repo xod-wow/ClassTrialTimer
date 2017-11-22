@@ -19,6 +19,13 @@
 
 ----------------------------------------------------------------------------]]--
 
+-- Your new trial character is playable for eight hours, or until you
+-- receive your first artifact weapon and create your Order Hall. After the
+-- trial is over, your character is locked from further play. You can purchase
+-- and use a Character Boost to permanently unlock your trial character.
+--
+--   https://us.battle.net/support/en/article/64574
+
 local function Update(self)
     if not self.expireTime then return end
 
@@ -26,8 +33,14 @@ local function Update(self)
     local h = floor((remainingTime % 86400) / 3600)
     local m = floor((remainingTime % 3600) / 60)
     local s = remainingTime % 60
-    local string = format('%02d:%02d', h, m)
-    self.remainingTime:SetText(string)
+
+    if self.db.showSeconds then
+        local string = format('%02d:%02d', h, m)
+        self.remainingTime:SetText(string)
+    else
+        local string = format('%02s:%02d:%02d', h, m, s)
+        self.remainingTime:SetText(string)
+    end
 
     if remainingTime < 15 * 60 then
         self.remainingTime:SetTextColor(1, 1, 0.5, 0.7)
@@ -36,14 +49,46 @@ local function Update(self)
     end
 end
 
-local function SlashCommand(argstr)
+local function SavePosition(self)
+    local p, _, r, x, y = self:GetPoint(1)
+    print(format("SavePosition %s, %s, %f, %f", p, r, x, y))
+    self.db.position = { p, r, x, y }
+end
+
+local function LoadPosition(self)
+    if self.db.position then
+        self:ClearAllPoints()
+        local p, r, x, y = unpack(self.db.position)
+        self:SetPoint(p, UIParent, r, x, y)
+    else
+        self:ClearAllPoints()
+        self:SetPoint("TOP", UIParent, "TOP", 0, -64)
+    end
+end
+
+local function ResetPosition(self)
+    self.db.position = nil
+    LoadPosition(self)
+end
+
+local function SlashCommand(self, argstr)
     local args = { strsplit(" ", argstr) }
     local cmd = table.remove(args, 1)
 
     if cmd == "hide" then
-        ClassTrialTimer:Hide()
+        self:Hide()
     elseif cmd == "show" then
-        ClassTrialTimer:Show()
+        self:Show()
+    elseif cmd == "seconds" then
+        if args[1] == "on" then
+            self.db.showSeconds = true
+        else
+            self.db.showSeconds = nil
+        end
+    elseif cmd == "reset" then
+        wipe(self.db)
+        ResetPosition(self)
+        Update(self)
     else
         RequestTimePlayed()
     end
@@ -64,18 +109,21 @@ function ClassTrialTimer_OnLoad(self)
 
     self:RegisterForDrag("LeftButton")
 
-    SlashCmdList["ClassTrialTimer"] = SlashCommand
-    SLASH_ClassTrialTimer1 = "/classtrialtimer"
-    SLASH_ClassTrialTimer2 = "/ctt"
+    SlashCmdList["ClassTrialTimer"] = function (...) SlashCommand(self, ...) end
+    SLASH_ClassTrialTimer1 = "/ctt"
 
     -- How to detect trial account?
     if UnitLevel("player") == 100 then
         self:RegisterEvent("TIME_PLAYED_MSG")
         RequestTimePlayed()
     end
+
+    -- For the DB stuff, not available yet when OnLoad fires
+    self:RegisterEvent("VARIABLES_LOADED")
 end
 
 function ClassTrialTimer_OnShow(self)
+    LoadPosition(self)
     self:SetScript("OnUpdate", ClassTrialTimer_OnUpdate)
 end
 
@@ -89,12 +137,15 @@ end
 
 function ClassTrialTimer_OnDragStop(self)
     self:StopMovingOrSizing()
-    -- self:SetUserPlaced(false)
-    -- ClassTrialTimer_SavePosition(self)
+    self:SetUserPlaced(false)
+    SavePosition(self)
 end
 
 function ClassTrialTimer_OnEvent(self, event, ...)
-    if event == "TIME_PLAYED_MSG" then
+    if event == "VARIABLES_LOADED" then
+        ClassTrialTimerDB = ClassTrialTimerDB or { }
+        self.db = ClassTrialTimerDB
+    elseif event == "TIME_PLAYED_MSG" then
         local totalTime, levelTime = ...
         if totalTime < 8 * 60 * 60 then
             self.expireTime = time() + (8 * 60 * 60) - totalTime
