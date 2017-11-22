@@ -35,10 +35,10 @@ local function Update(self)
     local s = remainingTime % 60
 
     if self.db.showSeconds then
-        local string = format('%02d:%02d', h, m)
+        local string = format('%02s:%02d:%02d', h, m, s)
         self.remainingTime:SetText(string)
     else
-        local string = format('%02s:%02d:%02d', h, m, s)
+        local string = format('%02d:%02d', h, m)
         self.remainingTime:SetText(string)
     end
 
