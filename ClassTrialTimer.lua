@@ -61,7 +61,7 @@ local function LoadPosition(self)
         self:SetPoint(p, UIParent, r, x, y)
     else
         self:ClearAllPoints()
-        self:SetPoint("TOP", UIParent, "TOP", 0, -64)
+        self:SetPoint("TOP", UIParent, "TOP", 0, -8)
     end
 end
 
@@ -102,6 +102,10 @@ function ClassTrialTimer_OnUpdate(self, elapsed)
 end
 
 function ClassTrialTimer_OnLoad(self)
+
+    self:SetBackdropColor(1, 1, 1, 0.25)
+    self:SetBackdropBorderColor(1, 1, 1, 0.5)
+
     local name, realm = UnitName("player")
     realm = realm or GetRealmName()
     self.characterName:SetText(format('%s-%s', name, realm))

@@ -4,7 +4,7 @@
 
 <Script file="ClassTrialTimer.lua"/>
 
-<Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" height="36" />
+<Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" outline="NORMAL" height="36" />
 
 <Frame name="ClassTrialTimer" toplevel="true" enableKeyboard="true" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true"> 
     
