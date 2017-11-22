@@ -51,7 +51,6 @@ end
 
 local function SavePosition(self)
     local p, _, r, x, y = self:GetPoint(1)
-    print(format("SavePosition %s, %s, %f, %f", p, r, x, y))
     self.db.position = { p, r, x, y }
 end
 
