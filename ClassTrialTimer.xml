@@ -1,0 +1,53 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+
+<!-- Copyright 2017 Mike Battersby -->
+
+<Script file="ClassTrialTimer.lua"/>
+
+<Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" height="36" />
+
+<Frame name="ClassTrialTimer" toplevel="true" enableKeyboard="true" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true"> 
+    
+    <Size x="200" y="64" />
+
+    <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+        <EdgeSize val="16" />
+        <TileSize val="16" />
+        <BackgroundInsets left="5" right="5" top="5" bottom="5" />
+    </Backdrop>
+
+    <Anchors>
+        <Anchor point="TOP" y="-64" />
+    </Anchors>
+
+    <Layers>
+        <Layer level="OVERLAY">
+            <FontString parentKey="characterName" inherits="GameFontNormal">
+                <Anchors>
+                    <Anchor point="TOPLEFT" y="-8" />
+                    <Anchor point="TOPRIGHT" y="-8" />
+                </Anchors>
+            </FontString>
+
+            <FontString parentKey="remainingTime" inherits="CTTMonoFont">
+                <Anchors>
+                    <Anchor point="TOPLEFT" y="-16" />
+                    <Anchor point="BOTTOMRIGHT" />
+                </Anchors>
+            </FontString>
+        </Layer>
+    </Layers>
+
+    <Scripts>
+        <OnLoad function="ClassTrialTimer_OnLoad" />
+        <OnEvent function="ClassTrialTimer_OnEvent" />
+        <OnDragStart>
+            self:StartMoving()
+        </OnDragStart>
+        <OnDragStop>
+            self:StopMovingOrSizing()
+        </OnDragStop>
+    </Scripts>
+</Frame>
+
+</Ui>

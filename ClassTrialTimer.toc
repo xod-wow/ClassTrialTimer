@@ -1,0 +1,8 @@
+## Interface: 70300
+## Title: ClassTrialTimer
+## Version: @project-version@
+## Author: Xodiv-Nagrand
+## Email: mib@post.com
+## SavedVariables: ClassTrialTimerDB
+
+ClassTrialTimer.xml
