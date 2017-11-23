@@ -35,7 +35,6 @@ local WarnAtSeconds = {
      [60] = true,
      [30] = true,
      [15] = true,
-     [10] = true,
 }
 
 local function Update(self)
