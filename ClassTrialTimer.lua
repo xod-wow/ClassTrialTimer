@@ -107,9 +107,18 @@ local function SlashCommand(self, argstr)
             self.db.color = { 1, 1, 1, max(min(a, 1.0), 0.0) }
         end
         LoadPosition(self)
-    else
+    elseif cmd == "update" then
         RequestTimePlayed()
+    else
+        print('ClassTrialTimer:')
+        print('  /ctt show')
+        print('  /ctt hide')
+        print('  /ctt reset')
+        print('  /ctt seconds on|off')
+        print('  /ctt alpha 0.25')
+        print('  /ctt update')
     end
+    return true
 end
 
 function ClassTrialTimer_OnUpdate(self, elapsed)
@@ -131,14 +140,8 @@ function ClassTrialTimer_OnLoad(self)
     SlashCmdList["ClassTrialTimer"] = function (...) SlashCommand(self, ...) end
     SLASH_ClassTrialTimer1 = "/ctt"
 
-    -- How to detect trial account?
-    if UnitLevel("player") == 100 then
-        self:RegisterEvent("TIME_PLAYED_MSG")
-        RequestTimePlayed()
-    end
-
-    -- For the DB stuff, not available yet when OnLoad fires
-    self:RegisterEvent("VARIABLES_LOADED")
+    -- Variables, and C_ClassTrial don't work in OnLoad
+    self:RegisterEvent("PLAYER_LOGIN")
 end
 
 function ClassTrialTimer_OnShow(self)
@@ -161,17 +164,19 @@ function ClassTrialTimer_OnDragStop(self)
 end
 
 function ClassTrialTimer_OnEvent(self, event, ...)
-    if event == "VARIABLES_LOADED" then
+    if event == "PLAYER_LOGIN" then
         ClassTrialTimerDB = ClassTrialTimerDB or { }
         self.db = ClassTrialTimerDB
-    elseif event == "TIME_PLAYED_MSG" then
-        local totalTime, levelTime = ...
-        if totalTime < 8 * 60 * 60 then
-            self.expireTime = time() + (8 * 60 * 60) - totalTime
-            Update(self)
+
+        if C_ClassTrial.IsClassTrialCharacter() then
+            self:RegisterEvent("TIME_PLAYED_MSG")
             self:Show()
-        else
-            self:Hide()
+            RequestTimePlayed()
         end
+    elseif event == "TIME_PLAYED_MSG" then
+        -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is always 0 :(
+        local totalTime, levelTime = ...
+        self.expireTime = time() + (8 * 60 * 60) - totalTime
+        Update(self)
     end
 end
