@@ -27,9 +27,9 @@
 --   https://us.battle.net/support/en/article/64574
 
 local function Update(self)
-    if not self.expireTime then return end
+    if not self.kickTime then return end
 
-    local remainingTime = self.expireTime - time()
+    local remainingTime = self.kickTime - time()
     local h = floor((remainingTime % 86400) / 3600)
     local m = floor((remainingTime % 3600) / 60)
     local s = remainingTime % 60
@@ -107,8 +107,6 @@ local function SlashCommand(self, argstr)
             self.db.color = { 1, 1, 1, max(min(a, 1.0), 0.0) }
         end
         LoadPosition(self)
-    else
-        RequestTimePlayed()
     end
 end
 
@@ -131,10 +129,12 @@ function ClassTrialTimer_OnLoad(self)
     SlashCmdList["ClassTrialTimer"] = function (...) SlashCommand(self, ...) end
     SLASH_ClassTrialTimer1 = "/ctt"
 
-    -- How to detect trial account?
-    if UnitLevel("player") == 100 then
-        self:RegisterEvent("TIME_PLAYED_MSG")
-        RequestTimePlayed()
+    if C_ClassTrial.IsClassTrialCharacter() then
+        self.kickTime = C_ClassTrial.GetClassTrialLogoutTimeSeconds()
+        Update(self)
+        self:Show()
+    else
+        self:Hide()
     end
 
     -- For the DB stuff, not available yet when OnLoad fires
@@ -164,14 +164,5 @@ function ClassTrialTimer_OnEvent(self, event, ...)
     if event == "VARIABLES_LOADED" then
         ClassTrialTimerDB = ClassTrialTimerDB or { }
         self.db = ClassTrialTimerDB
-    elseif event == "TIME_PLAYED_MSG" then
-        local totalTime, levelTime = ...
-        if totalTime < 8 * 60 * 60 then
-            self.expireTime = time() + (8 * 60 * 60) - totalTime
-            Update(self)
-            self:Show()
-        else
-            self:Hide()
-        end
     end
 end
