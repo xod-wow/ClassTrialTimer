@@ -26,6 +26,18 @@
 --
 --   https://us.battle.net/support/en/article/64574
 
+local WarnAtSeconds = {
+    [600] = true,
+    [300] = true,
+    [240] = true,
+    [180] = true,
+    [120] = true,
+     [60] = true,
+     [30] = true,
+     [15] = true,
+     [10] = true,
+}
+
 local function Update(self)
     if not self.expireTime then return end
 
@@ -46,6 +58,14 @@ local function Update(self)
         self.remainingTime:SetTextColor(1, 1, 0.5, 0.7)
     else
         self.remainingTime:SetTextColor(0.5, 1, 0.5, 0.7)
+    end
+
+    if WarnAtSeconds[remainingTime] then
+        local info = ChatTypeInfo["SYSTEM"]
+        local formattedTime = SecondsToTime(remainingTime, false, true, 1, true)
+        local timerText = format(CLASS_TRIAL_TIMER_DIALOG_TEXT_HAS_REMAINING_TIME, formattedTime)
+        DEFAULT_CHAT_FRAME:AddMessage(timerText, info.r, info.g, info.b, info.id)
+        PlaySound(SOUNDKIT.READY_CHECK)
     end
 end
 
@@ -73,6 +93,8 @@ local function LoadPosition(self)
         self:SetBackdropColor(1, 1, 1, 0.25)
         self:SetBackdropBorderColor(1, 1, 1, 0.5)
     end
+
+    self:EnableMouse(not self.db.locked)
 end
 
 local function ResetPosition(self)
@@ -109,11 +131,19 @@ local function SlashCommand(self, argstr)
         LoadPosition(self)
     elseif cmd == "update" then
         RequestTimePlayed()
+    elseif cmd == "lock" then
+        self.db.locked = true
+        LoadPosition(self)
+    elseif cmd == "unlock" then
+        self.db.locked = nil
+        LoadPosition(self)
     else
         print('ClassTrialTimer:')
         print('  /ctt show')
         print('  /ctt hide')
         print('  /ctt reset')
+        print('  /ctt lock')
+        print('  /ctt unlock')
         print('  /ctt seconds on|off')
         print('  /ctt alpha 0.25')
         print('  /ctt update')
