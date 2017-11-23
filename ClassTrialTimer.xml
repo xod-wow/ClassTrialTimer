@@ -6,8 +6,8 @@
 
 <Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" outline="NORMAL" height="36" />
 
-<Frame name="ClassTrialTimer" toplevel="true" enableKeyboard="true" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true"> 
-    
+<Frame name="ClassTrialTimer" parent="UIParent" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true">
+
     <Size x="200" y="64" />
 
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
