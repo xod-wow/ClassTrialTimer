@@ -52,6 +52,7 @@ end
 local function SavePosition(self)
     local p, _, r, x, y = self:GetPoint(1)
     self.db.position = { p, r, x, y }
+    self.db.color = { self:GetBackdropColor() }
 end
 
 local function LoadPosition(self)
@@ -63,10 +64,20 @@ local function LoadPosition(self)
         self:ClearAllPoints()
         self:SetPoint("TOP", UIParent, "TOP", 0, -8)
     end
+
+    if self.db.color then
+        local r, g, b, a = unpack(self.db.color)
+        self:SetBackdropColor(r, g, b, a)
+        self:SetBackdropBorderColor(r, g, b, min(2*a, 1))
+    else
+        self:SetBackdropColor(1, 1, 1, 0.25)
+        self:SetBackdropBorderColor(1, 1, 1, 0.5)
+    end
 end
 
 local function ResetPosition(self)
     self.db.position = nil
+    self.db.color = nil
     LoadPosition(self)
 end
 
@@ -88,6 +99,14 @@ local function SlashCommand(self, argstr)
         wipe(self.db)
         ResetPosition(self)
         Update(self)
+    elseif cmd == "alpha" then
+        local a = tonumber(args[1])
+        if not a then
+            self.db.color = nil
+        else
+            self.db.color = { 1, 1, 1, max(min(a, 1.0), 0.0) }
+        end
+        LoadPosition(self)
     else
         RequestTimePlayed()
     end
@@ -102,9 +121,6 @@ function ClassTrialTimer_OnUpdate(self, elapsed)
 end
 
 function ClassTrialTimer_OnLoad(self)
-
-    self:SetBackdropColor(1, 1, 1, 0.25)
-    self:SetBackdropBorderColor(1, 1, 1, 0.5)
 
     local name, realm = UnitName("player")
     realm = realm or GetRealmName()
