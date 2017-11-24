@@ -37,6 +37,10 @@ local WarnAtSeconds = {
      [15] = true,
 }
 
+local function clamp(value, minClamp, maxClamp)
+    return min(max(value, minClamp), maxClamp)
+end
+
 local function Update(self)
     if not self.expireTime then return end
 
@@ -81,7 +85,7 @@ local function LoadPosition(self)
         self:SetPoint(p, UIParent, r, x, y)
     else
         self:ClearAllPoints()
-        self:SetPoint("TOP", UIParent, "TOP", 0, -8)
+        self:SetPoint("TOP", UIParent, "TOP", 0, -12)
     end
 
     if self.db.color then
@@ -93,6 +97,7 @@ local function LoadPosition(self)
         self:SetBackdropBorderColor(1, 1, 1, 0.5)
     end
 
+    self:SetScale(self.db.scale or 1.0)
     self:EnableMouse(not self.db.locked)
 end
 
@@ -125,8 +130,17 @@ local function SlashCommand(self, argstr)
         if not a then
             self.db.color = nil
         else
-            self.db.color = { 1, 1, 1, max(min(a, 1.0), 0.0) }
+            self.db.color = { 1, 1, 1, clamp(a, 0.0, 1.0) }
         end
+        LoadPosition(self)
+    elseif cmd == "scale" then
+        local a = tonumber(args[1])
+        if not a then
+            self.db.scale = nil
+        else
+            self.db.scale = clamp(a, 0.1, 3.0)
+        end
+        print(tostring(self.db.scale))
         LoadPosition(self)
     elseif cmd == "update" then
         RequestTimePlayed()

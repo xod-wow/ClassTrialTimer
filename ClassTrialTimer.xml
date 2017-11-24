@@ -4,11 +4,11 @@
 
 <Script file="ClassTrialTimer.lua"/>
 
-<Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" outline="NORMAL" height="36" />
+<Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" outline="NORMAL" height="60" />
 
 <Frame name="ClassTrialTimer" parent="UIParent" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true">
 
-    <Size x="200" y="64" />
+    <Size x="320" y="100" />
 
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
         <EdgeSize val="16" />
@@ -18,16 +18,16 @@
 
     <Layers>
         <Layer level="OVERLAY">
-            <FontString parentKey="characterName" inherits="GameFontNormal">
+            <FontString parentKey="characterName" inherits="GameFontNormalHuge">
                 <Anchors>
-                    <Anchor point="TOPLEFT" y="-8" />
-                    <Anchor point="TOPRIGHT" y="-8" />
+                    <Anchor point="TOPLEFT" y="-12" />
+                    <Anchor point="TOPRIGHT" y="-12" />
                 </Anchors>
             </FontString>
 
             <FontString parentKey="remainingTime" inherits="CTTMonoFont">
                 <Anchors>
-                    <Anchor point="TOPLEFT" y="-16" />
+                    <Anchor point="TOPLEFT" y="-24" />
                     <Anchor point="BOTTOMRIGHT" />
                 </Anchors>
             </FontString>
