@@ -158,7 +158,8 @@ local function SlashCommand(self, argstr)
         print('  /ctt lock')
         print('  /ctt unlock')
         print('  /ctt seconds on|off')
-        print('  /ctt alpha 0.25')
+        print('  /ctt alpha 0.0-1.0')
+        print('  /ctt scale 0.1-3.0')
         print('  /ctt update')
     end
     return true
