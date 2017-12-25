@@ -219,8 +219,8 @@ function ClassTrialTimer_OnEvent(self, event, ...)
         end
 
         local name, realm = UnitFullName("player")
-        realm = realm or GetRealmName()
-        self.characterName:SetText(format('%s-%s', name, realm))
+        local faction = UnitFactionGroup("player"):sub(1,1)
+        self.characterName:SetText(format('%s-%s [%s]', name, realm, faction))
 
     elseif event == "TIME_PLAYED_MSG" then
         -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is always 0 :(
