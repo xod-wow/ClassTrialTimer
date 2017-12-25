@@ -49,13 +49,15 @@ local function Update(self)
     local m = floor((remainingTime % 3600) / 60)
     local s = remainingTime % 60
 
-    if self.db.showSeconds then
-        local string = format('%02s:%02d:%02d', h, m, s)
-        self.remainingTime:SetText(string)
+    local string
+    if self.db.showSeconds and
+       (self.db.showSeconds == true or remainingTime < self.db.showSeconds)
+    then
+        string = format('%02s:%02d:%02d', h, m, s)
     else
-        local string = format('%02d:%02d', h, m)
-        self.remainingTime:SetText(string)
+        string = format('%02d:%02d', h, m)
     end
+    self.remainingTime:SetText(string)
 
     if remainingTime < 15 * 60 then
         self.remainingTime:SetTextColor(1, 1, 0.5, 0.7)
@@ -116,10 +118,12 @@ local function SlashCommand(self, argstr)
     elseif cmd == "show" then
         self:Show()
     elseif cmd == "seconds" then
-        if args[1] == "on" then
+        if args[1] == "off" or args[1] == "0" then
+            self.db.showSeconds = nil
+        elseif args[1] == "on" then
             self.db.showSeconds = true
         else
-            self.db.showSeconds = nil
+            self.db.showSeconds = tonumber(args[1])
         end
     elseif cmd == "reset" then
         wipe(self.db)
@@ -175,7 +179,7 @@ end
 
 function ClassTrialTimer_OnLoad(self)
 
-    local name, realm = UnitName("player")
+    local name, realm = UnitFullName("player")
     realm = realm or GetRealmName()
     self.characterName:SetText(format('%s-%s', name, realm))
 
