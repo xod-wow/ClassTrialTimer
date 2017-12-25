@@ -179,10 +179,6 @@ end
 
 function ClassTrialTimer_OnLoad(self)
 
-    local name, realm = UnitFullName("player")
-    realm = realm or GetRealmName()
-    self.characterName:SetText(format('%s-%s', name, realm))
-
     self:RegisterForDrag("LeftButton")
 
     SlashCmdList["ClassTrialTimer"] = function (...) SlashCommand(self, ...) end
@@ -221,6 +217,11 @@ function ClassTrialTimer_OnEvent(self, event, ...)
             self:Show()
             RequestTimePlayed()
         end
+
+        local name, realm = UnitFullName("player")
+        realm = realm or GetRealmName()
+        self.characterName:SetText(format('%s-%s', name, realm))
+
     elseif event == "TIME_PLAYED_MSG" then
         -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is always 0 :(
         local totalTime, levelTime = ...
