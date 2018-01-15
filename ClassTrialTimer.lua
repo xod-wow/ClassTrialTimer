@@ -43,12 +43,15 @@ end
 
 local function Alert(...)
     local msg = format(...)
-    local f = FCF_GetCurrentChatFrame() or DEFAULT_CHAT_FRAME
+    local f = DEFAULT_CHAT_FRAME
     f:AddMessage(RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
 end
 
 -- Tooltip scanning, annoying but the only way it seems
 local function SameZone(unit)
+
+    -- "player" always visible so can skip UnitIsUnit("player", unit)
+
     if UnitIsVisible(unit) then
         return true
     end
@@ -215,6 +218,8 @@ local function SlashCommand(self, argstr)
     elseif cmd == "unlock" then
         self.db.locked = nil
         LoadPosition(self)
+    elseif cmd == "zc" then
+        SameZoneCheckAndAlert()
     else
         print('ClassTrialTimer:')
         print('  /ctt show')
@@ -280,9 +285,9 @@ function ClassTrialTimer_OnEvent(self, event, ...)
             RequestTimePlayed()
         end
 
-        local name, realm = UnitFullName("player")
+        local name = format('%s-%s', UnitFullName("player"))
         local faction = UnitFactionGroup("player"):sub(1,1)
-        self.characterName:SetText(format('%s-%s [%s]', name, realm, faction))
+        self.characterName:SetText(format('%s [%s]', name, faction))
 
     elseif event == "TIME_PLAYED_MSG" then
         -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is always 0 :(
