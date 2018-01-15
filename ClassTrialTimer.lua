@@ -41,6 +41,67 @@ local function clamp(value, minClamp, maxClamp)
     return min(max(value, minClamp), maxClamp)
 end
 
+local function Alert(...)
+    local msg = format(...)
+    local f = FCF_GetCurrentChatFrame() or DEFAULT_CHAT_FRAME
+    f:AddMessage(RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
+end
+
+-- Tooltip scanning, annoying but the only way it seems
+local function SameZone(unit)
+    if UnitIsVisible(unit) then
+        return true
+    end
+
+    if not UnitIsConnected(unit) then
+        return false
+    end
+
+    local tt = CTTScanTip
+    if not tt then
+        tt = CreateFrame("GameTooltip", "CTTScanTip")
+        tt:SetOwner(UIParent, "ANCHOR_NONE")
+    end
+
+    local pzone, text, fs = GetZoneText()
+
+    tt:ClearLines()
+    tt:SetUnit(unit)
+
+    -- This is a good-enough test, look through all the TT lines and
+    -- see if any of the left texts match the player zone name
+    for i = 2, tt:NumLines() do
+        fs = _G["CTTScanTipLeftText"..i]
+        if fs then
+            text = fs:GetText()
+            if text == pzone then return true end
+        end
+    end
+
+    return false
+end
+
+local function SameZoneCheckAndAlert()
+    local unit, name
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            unit = "raid"..i
+            if not SameZone(unit) then
+                name = format('%s-%s', UnitFullName(unit))
+                Alert('%s (%s) is not here', name, unit)
+            end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers() do
+            unit = "party"..i
+            if not SameZone(unit) then
+                name = format('%s-%s', UnitFullName(unit))
+                Alert('%s (%s) is not here', name, unit)
+            end
+        end
+    end
+end
+
 local function Update(self)
     if not self.expireTime then return end
 
@@ -214,6 +275,7 @@ function ClassTrialTimer_OnEvent(self, event, ...)
 
         if C_ClassTrial.IsClassTrialCharacter() then
             self:RegisterEvent("TIME_PLAYED_MSG")
+            self:RegisterEvent("GROUP_ROSTER_UPDATE")
             self:Show()
             RequestTimePlayed()
         end
@@ -227,5 +289,7 @@ function ClassTrialTimer_OnEvent(self, event, ...)
         local totalTime, levelTime = ...
         self.expireTime = time() + (8 * 60 * 60) - totalTime
         Update(self)
+    elseif event == "GROUP_ROSTER_UPDATE" then
+        SameZoneCheckAndAlert()
     end
 end
