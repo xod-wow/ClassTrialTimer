@@ -84,22 +84,27 @@ local function SameZone(unit)
     return false
 end
 
+-- God dammit Blizzard
+local function UnitDisplayName(unit)
+    local n, r = UnitFullName(unit)
+    r = r or select(2, UnitFullName("player"))
+    return format('%s-%s', n, r)
+end
+
 local function SameZoneCheckAndAlert()
     local unit, name
     if IsInRaid() then
-        for i = 1, GetNumGroupMembers() do
+        for i = 1, MAX_RAID_MEMBERS do
             unit = "raid"..i
-            if not SameZone(unit) then
-                name = format('%s-%s', UnitFullName(unit))
-                Alert('%s (%s) is not here', name, unit)
+            if UnitExists(unit) and not SameZone(unit) then
+                Alert('%s (%s) is not here', UnitDisplayName(unit), unit)
             end
         end
     elseif IsInGroup() then
-        for i = 1, GetNumGroupMembers() do
+        for i = 1, MAX_PARTY_MEMBERS do
             unit = "party"..i
-            if not SameZone(unit) then
-                name = format('%s-%s', UnitFullName(unit))
-                Alert('%s (%s) is not here', name, unit)
+            if UnitExists(unit) and not SameZone(unit) then
+                Alert('%s (%s) is not here', UnitDisplayName(unit), unit)
             end
         end
     end
@@ -290,7 +295,8 @@ function ClassTrialTimer_OnEvent(self, event, ...)
         self.characterName:SetText(format('%s [%s]', name, faction))
 
     elseif event == "TIME_PLAYED_MSG" then
-        -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is always 0 :(
+        -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is 0 until the trial
+        -- is about to expire.
         local totalTime, levelTime = ...
         self.expireTime = time() + (8 * 60 * 60) - totalTime
         Update(self)
