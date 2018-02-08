@@ -66,7 +66,7 @@ local function SameZone(unit)
         tt:SetOwner(UIParent, "ANCHOR_NONE")
     end
 
-    local pzone, text, fs = GetZoneText()
+    local pzone, text, fs = GetSubZoneText()
 
     tt:ClearLines()
     tt:SetUnit(unit)
