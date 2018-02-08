@@ -41,9 +41,18 @@ local function clamp(value, minClamp, maxClamp)
     return min(max(value, minClamp), maxClamp)
 end
 
+local function ActiveChatFrame()
+    local f
+    for i = 1, NUM_CHAT_WINDOWS do
+        f = _G["ChatFrame"..i]
+        if f:IsShown() then return f end
+    end
+    return DEFAULT_CHAT_FRAME
+end
+
 local function Alert(...)
     local msg = format(...)
-    local f = DEFAULT_CHAT_FRAME
+    local f = ActiveChatFrame()
     f:AddMessage(RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
 end
 
