@@ -41,6 +41,15 @@ local function clamp(value, minClamp, maxClamp)
     return min(max(value, minClamp), maxClamp)
 end
 
+local function ClassTrialMaxSeconds()
+    local level = UnitLevel("player")
+    if level < 110 then
+        return 8 * 60 * 60
+    else
+        return 3 * 60 * 60
+    end
+end
+
 local function ActiveChatFrame()
     local f
     for i = 1, NUM_CHAT_WINDOWS do
@@ -307,7 +316,7 @@ function ClassTrialTimer_OnEvent(self, event, ...)
         -- C_ClassTrial.GetClassTrialLogoutTimeSeconds is 0 until the trial
         -- is about to expire.
         local totalTime, levelTime = ...
-        self.expireTime = time() + (8 * 60 * 60) - totalTime
+        self.expireTime = time() + ClassTrialMaxSeconds() - totalTime
         Update(self)
     elseif event == "GROUP_ROSTER_UPDATE" then
         SameZoneCheckAndAlert()
