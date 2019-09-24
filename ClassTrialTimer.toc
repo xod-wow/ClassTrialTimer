@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 80205
 ## Title: ClassTrialTimer
 ## Version: @project-version@
 ## Author: Xodiv-Nagrand
