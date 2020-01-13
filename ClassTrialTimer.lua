@@ -50,18 +50,9 @@ local function ClassTrialMaxSeconds()
     end
 end
 
-local function ActiveChatFrame()
-    local f
-    for i = 1, NUM_CHAT_WINDOWS do
-        f = _G["ChatFrame"..i]
-        if f:IsShown() then return f end
-    end
-    return DEFAULT_CHAT_FRAME
-end
-
 local function Alert(...)
     local msg = format(...)
-    local f = ActiveChatFrame()
+    local f = SELECTED_CHAT_FRAME or DEFAULT_CHAT_FRAME
     f:AddMessage(RED_FONT_COLOR_CODE .. msg .. FONT_COLOR_CODE_CLOSE)
 end
 
