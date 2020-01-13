@@ -2,7 +2,7 @@
 
   ClassTrialTimer - World of Warcraft AddOn
 
-  Copyright 2017-2018 Mike Battersby
+  Copyright 2017-2020 Mike Battersby
 
   ClassTrialTimer is free software: you can redistribute it and/or modify it
   under the terms of the GNU General Public License, version 2, as published
