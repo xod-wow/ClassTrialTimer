@@ -42,12 +42,7 @@ local function clamp(value, minClamp, maxClamp)
 end
 
 local function ClassTrialMaxSeconds()
-    local level = UnitLevel("player")
-    if level < 110 then
-        return 8 * 60 * 60
-    else
-        return 3 * 60 * 60
-    end
+    return 3 * 60 * 60
 end
 
 local function Alert(...)
@@ -155,7 +150,6 @@ end
 local function SavePosition(self)
     local p, _, r, x, y = self:GetPoint(1)
     self.db.position = { p, r, x, y }
-    self.db.color = { self:GetBackdropColor() }
 end
 
 local function LoadPosition(self)
@@ -168,14 +162,12 @@ local function LoadPosition(self)
         self:SetPoint("TOP", UIParent, "TOP", 0, -12)
     end
 
-    if self.db.color then
-        local r, g, b, a = unpack(self.db.color)
-        self:SetBackdropColor(r, g, b, a)
-        self:SetBackdropBorderColor(r, g, b, min(2*a, 1))
-    else
-        self:SetBackdropColor(1, 1, 1, 0.25)
-        self:SetBackdropBorderColor(1, 1, 1, 0.5)
-    end
+    local r, g, b, a = self:GetBackdropColor()
+    a = self.db.alpha or 0.5
+    self:SetBackdropColor(r, g, b, self.db.alpha or 0.5)
+
+    r, g, b, a = self:GetBackdropBorderColor()
+    self:SetBackdropBorderColor(r, g, b, self.db.alpha or 0.5)
 
     self:SetScale(self.db.scale or 1.0)
     self:EnableMouse(not self.db.locked)
@@ -210,9 +202,9 @@ local function SlashCommand(self, argstr)
     elseif cmd == "alpha" then
         local a = tonumber(args[1])
         if not a then
-            self.db.color = nil
+            self.db.alpha = nil
         else
-            self.db.color = { 1, 1, 1, clamp(a, 0.0, 1.0) }
+            self.db.alpha = clamp(a, 0.0, 1.0)
         end
         LoadPosition(self)
     elseif cmd == "scale" then

@@ -6,15 +6,9 @@
 
 <Font name="CTTMonoFont" font="Interface\AddOns\ClassTrialTimer\fonts\Inconsolata-Bold.ttf" outline="NORMAL" height="60" />
 
-<Frame name="ClassTrialTimer" parent="UIParent" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true">
+<Frame name="ClassTrialTimer" parent="UIParent" enableMouse="true" frameStrata="DIALOG" movable="true" clampedToScreen="true" hidden="true" inherits="TooltipBackdropTemplate">
 
     <Size x="320" y="100" />
-
-    <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-        <EdgeSize val="16" />
-        <TileSize val="16" />
-        <BackgroundInsets left="5" right="5" top="5" bottom="5" />
-    </Backdrop>
 
     <Layers>
         <Layer level="OVERLAY">
@@ -35,10 +29,10 @@
     </Layers>
 
     <Scripts>
-        <OnLoad function="ClassTrialTimer_OnLoad" />
-        <OnEvent function="ClassTrialTimer_OnEvent" />
-        <OnShow function="ClassTrialTimer_OnShow" />
-        <OnHide function="ClassTrialTimer_OnHide" />
+        <OnLoad inherit="append" function="ClassTrialTimer_OnLoad" />
+        <OnEvent inherit="append" function="ClassTrialTimer_OnEvent" />
+        <OnShow inherit="append" function="ClassTrialTimer_OnShow" />
+        <OnHide inherit="append" function="ClassTrialTimer_OnHide" />
         <OnDragStart function="ClassTrialTimer_OnDragStart" />
         <OnDragStop function="ClassTrialTimer_OnDragStop" />
     </Scripts>
