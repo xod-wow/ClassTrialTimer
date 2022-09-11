@@ -4,5 +4,6 @@
 ## Author: Xodiv-Nagrand
 ## Email: mib@post.com
 ## SavedVariables: ClassTrialTimerDB
+## X-Curse-Project-ID: 282389
 
 ClassTrialTimer.xml
